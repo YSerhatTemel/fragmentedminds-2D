@@ -14,18 +14,34 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // 1. DİYALOG KONTROLÜ (Girdileri Kes ve Zihni Temizle)
+        if (DialogueManager.instance.isDialogueActive)
+        {
+            // ÇOK ÖNEMLİ: Karakterin en son hatırladığı hareket yönünü tamamen sıfırlıyoruz.
+            // Böylece FixedUpdate'teki hesaplama sıfırla çarpılıp karakteri durduracak.
+            movement = Vector2.zero; 
+            
+            return; // Aşağıdaki tuş okuma kodlarını iptal et
+        }
+
         // GİRDİ ALMA: Klavyeden yön tuşlarını (WASD veya Ok tuşları) dinliyoruz
-        // Basılmazsa 0, basılırsa yönüne göre 1 veya -1 döndürür.
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
 
-        // Çapraz giderken vektör uzunluğunun artmasını (karakterin hızlanmasını) önlemek için normalize ediyoruz
+        // Çapraz giderken vektör uzunluğunun artmasını önlemek için normalize ediyoruz
         movement = movement.normalized;
     }
 
     void FixedUpdate()
     {
-        // HAREKET ETME: Fizik motoruyla ilgili hesaplamalar her zaman FixedUpdate içinde yapılır
+        // 2. FİZİK KONTROLÜ (Fizik motorunu da dondur)
+        if (DialogueManager.instance.isDialogueActive)
+        {
+            rb.linearVelocity = Vector2.zero; // Varsa ekstra savrulmaları/kaymaları durdur
+            return; // Fizik motorunun karakteri hareket ettirmesini tamamen iptal et
+        }
+
+        // HAREKET ETME: Fizik motoruyla ilgili hesaplamalar
         rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
     }
 }

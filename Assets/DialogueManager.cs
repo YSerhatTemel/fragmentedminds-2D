@@ -7,10 +7,11 @@ public class DialogueManager : MonoBehaviour
     public GameObject dialogueBox;    
     public TMP_Text dialogueText;     
     public float typingSpeed = 0.05f; 
+    public bool isDialogueActive = false;
 
     public static DialogueManager instance; 
 
-    // Yeni eklenen değişkenler (Çoklu sayfa ve oyuncu kontrolü için)
+
     private string[] currentLines;     // Okunacak tüm sayfaların listesi
     private int currentLineIndex;      // Şu an kaçıncı sayfadayız?
     private bool isTyping;             // Yazı daktilo gibi akmaya devam ediyor mu?
@@ -49,6 +50,7 @@ public class DialogueManager : MonoBehaviour
     // Anı parçasından tek bir mesaj yerine artık bir 'mesaj listesi' alıyoruz
     public void ShowDialogue(string[] lines)
     {
+        isDialogueActive = true;
         currentLines = lines;
         currentLineIndex = 0; // İlk sayfadan başla
         dialogueBox.SetActive(true); 
@@ -87,6 +89,7 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
+            isDialogueActive = false;
             // Eğer tüm sayfalar bittiyse kutuyu tamamen kapat
             dialogueBox.SetActive(false);
         }
