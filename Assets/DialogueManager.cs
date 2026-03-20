@@ -4,62 +4,70 @@ using TMPro;
 
 public class DialogueManager : MonoBehaviour
 {
+    [Header("UI Components")]
     public GameObject dialogueBox;    
     public TMP_Text dialogueText;     
+    public GameObject continueIcon; 
+    
+    [Header("Settings")]
     public float typingSpeed = 0.05f; 
-    public bool isDialogueActive = false;
+
+    [Header("Audio")]
+    public AudioSource audioSource; 
+    public AudioClip typingSound;   
+    
+    // YENİ: Sesin ne sıklıkla çalacağını Inspector'dan ayarlamamızı sağlayan değişken
+    [Range(1, 5)]
+    public int soundFrequency = 2; // Varsayılan olarak her 2 harfte 1 ses çalar
 
     public static DialogueManager instance; 
+    public bool isDialogueActive = false; 
 
-
-    private string[] currentLines;     // Okunacak tüm sayfaların listesi
-    private int currentLineIndex;      // Şu an kaçıncı sayfadayız?
-    private bool isTyping;             // Yazı daktilo gibi akmaya devam ediyor mu?
-    private Coroutine typingCoroutine; // Çalışan daktilo işlemini tutan referans
+    private string[] currentLines;     
+    private int currentLineIndex;      
+    private bool isTyping;             
+    private Coroutine typingCoroutine; 
 
     private void Awake()
     {
         instance = this;
         dialogueBox.SetActive(false); 
+        continueIcon.SetActive(false); 
     }
 
-    // Update, oyun çalıştığı sürece her saniye (frame) oyuncunun tuşlara basıp basmadığını dinler
     private void Update()
     {
-        // Eğer diyalog kutusu ekranda yoksa, boşuna tuşları dinleme
         if (!dialogueBox.activeInHierarchy) return;
 
-        // Oyuncu Boşluk (Space) veya E tuşuna basarsa...
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(0))
         {
             if (isTyping)
             {
-                // Eğer yazı hala harf harf akıyorsa: Bekletme, yazının tamamını anında ekrana bas (Skip)
                 StopCoroutine(typingCoroutine);
                 dialogueText.text = currentLines[currentLineIndex];
                 isTyping = false;
+                continueIcon.SetActive(true); 
             }
             else
             {
-                // Eğer yazı çoktan bittiyse: Bir sonraki sayfaya geç
                 NextLine();
             }
         }
     }
 
-    // Anı parçasından tek bir mesaj yerine artık bir 'mesaj listesi' alıyoruz
     public void ShowDialogue(string[] lines)
     {
-        isDialogueActive = true;
+        isDialogueActive = true; 
         currentLines = lines;
-        currentLineIndex = 0; // İlk sayfadan başla
+        currentLineIndex = 0;
         dialogueBox.SetActive(true); 
         StartTyping();
     }
 
     private void StartTyping()
     {
-        // Kutuyu temizleyip daktilo efektini başlatıyoruz
+        continueIcon.SetActive(false); 
+        
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
         typingCoroutine = StartCoroutine(TypeText(currentLines[currentLineIndex]));
     }
@@ -69,29 +77,51 @@ public class DialogueManager : MonoBehaviour
         isTyping = true;
         dialogueText.text = ""; 
 
+        // YENİ: Başlamadan önce kasetimizi hoparlöre takıyoruz
+        if (audioSource != null && typingSound != null)
+        {
+            audioSource.clip = typingSound;
+        }
+
+        int charCount = 0; 
+
         foreach (char letter in line.ToCharArray())
         {
             dialogueText.text += letter; 
+
+            if (letter != ' ')
+            {
+                charCount++;
+                
+                if (charCount % soundFrequency == 0 && audioSource != null)
+                {
+                    // İŞTE BÜYÜK DEĞİŞİKLİK BURADA:
+                    audioSource.Stop(); // 1. Varsa hala çalan eski sesi bıçak gibi kes!
+                    audioSource.pitch = Random.Range(0.9f, 1.1f); 
+                    audioSource.Play(); // 2. Temiz bir şekilde baştan çal (PlayOneShot yerine Play)
+                }
+            }
+
             yield return new WaitForSeconds(typingSpeed); 
         }
 
-        isTyping = false; // Yazı bitti
+        isTyping = false; 
+        continueIcon.SetActive(true); 
     }
 
     private void NextLine()
     {
-        currentLineIndex++; // Sayfa numarasını 1 artır
+        currentLineIndex++; 
 
         if (currentLineIndex < currentLines.Length)
         {
-            // Eğer okunacak başka sayfa varsa onu yazmaya başla
             StartTyping();
         }
         else
         {
-            isDialogueActive = false;
-            // Eğer tüm sayfalar bittiyse kutuyu tamamen kapat
             dialogueBox.SetActive(false);
+            isDialogueActive = false; 
+            continueIcon.SetActive(false); 
         }
     }
 }
