@@ -16,9 +16,8 @@ public class DialogueManager : MonoBehaviour
     public AudioSource audioSource; 
     public AudioClip typingSound;   
     
-    // YENİ: Sesin ne sıklıkla çalacağını Inspector'dan ayarlamamızı sağlayan değişken
     [Range(1, 5)]
-    public int soundFrequency = 2; // Varsayılan olarak her 2 harfte 1 ses çalar
+    public int soundFrequency = 2; 
 
     public static DialogueManager instance; 
     public bool isDialogueActive = false; 
@@ -77,7 +76,6 @@ public class DialogueManager : MonoBehaviour
         isTyping = true;
         dialogueText.text = ""; 
 
-        // YENİ: Başlamadan önce kasetimizi hoparlöre takıyoruz
         if (audioSource != null && typingSound != null)
         {
             audioSource.clip = typingSound;
@@ -95,10 +93,13 @@ public class DialogueManager : MonoBehaviour
                 
                 if (charCount % soundFrequency == 0 && audioSource != null)
                 {
-                    // İŞTE BÜYÜK DEĞİŞİKLİK BURADA:
-                    audioSource.Stop(); // 1. Varsa hala çalan eski sesi bıçak gibi kes!
-                    audioSource.pitch = Random.Range(0.9f, 1.1f); 
-                    audioSource.Play(); // 2. Temiz bir şekilde baştan çal (PlayOneShot yerine Play)
+                    audioSource.Stop(); 
+                    
+                    // MÜZİKAL GÜNCELLEME: 
+                    // Nota değişmesin, detone olmasın diye Pitch'i her zaman tam 1.0f'e sabitliyoruz.
+                    audioSource.pitch = 1.0f; 
+                    
+                    audioSource.Play(); 
                 }
             }
 
