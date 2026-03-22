@@ -416,8 +416,8 @@ MonoBehaviour:
   continueIcon: {fileID: 2105403836}
   typingSpeed: 0.05
   audioSource: {fileID: 155452918}
-  typingSound: {fileID: 8300000, guid: cc221e87ecd7cc0499edcfa071fab70e, type: 3}
-  soundFrequency: 3
+  typingSound: {fileID: 8300000, guid: 59d76d21ee2633547b00fee00c1856ae, type: 3}
+  soundFrequency: 4
   isDialogueActive: 0
 --- !u!82 &155452918
 AudioSource:
@@ -432,7 +432,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.3
   m_Pitch: 1
   Loop: 0
   Mute: 0
