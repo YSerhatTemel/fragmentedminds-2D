@@ -1,4 +1,5 @@
 using System.Collections;
+using System; // Action kullanabilmek için bu kütüphane şart
 using UnityEngine;
 using TMPro;
 
@@ -26,6 +27,9 @@ public class DialogueManager : MonoBehaviour
     private int currentLineIndex;      
     private bool isTyping;             
     private Coroutine typingCoroutine; 
+    
+    // Diyalog bittiğinde çalıştırılacak fonksiyonu burada tutacağız
+    private Action onDialogueEndCallback; 
 
     private void Awake()
     {
@@ -54,11 +58,15 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    public void ShowDialogue(string[] lines)
+    // Parametreye isteğe bağlı bir 'Action' (onComplete) ekledik
+    public void ShowDialogue(string[] lines, Action onComplete = null)
     {
         isDialogueActive = true; 
         currentLines = lines;
         currentLineIndex = 0;
+        
+        onDialogueEndCallback = onComplete; // Bize verilen görevi hafızaya alıyoruz
+        
         dialogueBox.SetActive(true); 
         StartTyping();
     }
@@ -94,11 +102,7 @@ public class DialogueManager : MonoBehaviour
                 if (charCount % soundFrequency == 0 && audioSource != null)
                 {
                     audioSource.Stop(); 
-                    
-                    // MÜZİKAL GÜNCELLEME: 
-                    // Nota değişmesin, detone olmasın diye Pitch'i her zaman tam 1.0f'e sabitliyoruz.
                     audioSource.pitch = 1.0f; 
-                    
                     audioSource.Play(); 
                 }
             }
@@ -120,9 +124,17 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
+            // DİYALOG TAMAMEN BİTTİ!
             dialogueBox.SetActive(false);
             isDialogueActive = false; 
             continueIcon.SetActive(false); 
+            
+            // Eğer bize verilen bir "bitiş görevi" varsa, onu tetikliyoruz
+            if (onDialogueEndCallback != null)
+            {
+                onDialogueEndCallback.Invoke(); // MemoryFragment'taki fonksiyonu çalıştırır
+                onDialogueEndCallback = null; // Görev bitti, hafızayı temizle
+            }
         }
     }
 }

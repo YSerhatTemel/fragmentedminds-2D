@@ -1,16 +1,29 @@
+using System.Collections; // Coroutine için gerekli
 using UnityEngine;
-using UnityEngine.Tilemaps; // Required library to control the Tilemap system!
+using UnityEngine.Tilemaps;
 
 public class PathBuilder : MonoBehaviour
 {
     [Header("Path Settings")]
-    public Tilemap targetTilemap; // The Tilemap where the path will be drawn
-    public TileBase baseTile; // <--- İŞTE DEĞİŞEN TEK KELİME: "Tile" yerine "TileBase" oldu.
+    public Tilemap targetTilemap; 
+    public TileBase baseTile; 
 
-    // This function will be called when a memory is read (after dialogue ends)
-    public void BuildSingleTile(Vector3Int tilePosition)
+    [Header("Animation Settings")]
+    public float timeBetweenTiles = 0.2f; // Taşların belirme hızı (saniye)
+
+    // MemoryFragment artık bu fonksiyonu çağıracak
+    public void BuildPathSequentially(Vector3Int[] tilePositions)
     {
-        // Places the path tile at the specified coordinates
-        targetTilemap.SetTile(tilePosition, baseTile);
+        StartCoroutine(PlaceTilesWithDelay(tilePositions));
+    }
+
+    // Taşları bekleyerek tek tek koyan sihirli fonksiyon
+    private IEnumerator PlaceTilesWithDelay(Vector3Int[] tilePositions)
+    {
+        foreach (Vector3Int pos in tilePositions)
+        {
+            targetTilemap.SetTile(pos, baseTile);
+            yield return new WaitForSeconds(timeBetweenTiles); // Belirlediğimiz süre kadar bekle
+        }
     }
 }
