@@ -6,30 +6,36 @@ public class MemoryFragment : MonoBehaviour
     public string[] memoryLines; 
 
     [Header("Path Building Data")]
-    // Bu anı okunduğunda hangi koordinatlara yol döşenecek?
     public Vector3Int[] tilesToBuild; 
+
+    [Header("Choice Mechanics")]
+    [Tooltip("Eğer bu anı seçilirse, YIKILACAK olan 'diğer' anıyı buraya sürükleyin")]
+    public GameObject oppositeFragment; // Rakip anı
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.name == "Player")
         {
-            // Objenin görselini ve fiziğini kapatıyoruz (Yokmuş gibi davranacak ama kod çalışmaya devam edecek)
+            // SEÇİM MEKANİĞİ: Eğer bu anının bir "rakibi" varsa, onu anında sahneden sil!
+            if (oppositeFragment != null)
+            {
+                Destroy(oppositeFragment);
+            }
+
+            // Kendimizi görünmez yapıp diyalogu başlatıyoruz
             GetComponent<SpriteRenderer>().enabled = false;
             GetComponent<Collider2D>().enabled = false;
 
-            // DialogueManager'a yazıları ve "Yazılar bitince OnDialogueFinished'ı çalıştır" emrini gönderiyoruz
             DialogueManager.instance.ShowDialogue(memoryLines, OnDialogueFinished);
         }
     }
 
-    // Bu fonksiyonu biz doğrudan çağırmıyoruz, DialogueManager işi bitince çağırıyor
-   private void OnDialogueFinished()
+    private void OnDialogueFinished()
     {
         PathBuilder builder = FindFirstObjectByType<PathBuilder>();
 
         if (builder != null)
         {
-            // Artık tek tek biz koymuyoruz, tüm listeyi PathBuilder'a verip "sırayla diz" diyoruz
             builder.BuildPathSequentially(tilesToBuild);
         }
 
