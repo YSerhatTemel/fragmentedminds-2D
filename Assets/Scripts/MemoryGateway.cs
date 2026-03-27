@@ -15,12 +15,22 @@ public class MemoryGateway : MonoBehaviour
 
     private bool isFading = false; // Kararma başladıktan sonra oyuncu tekrar çarparsa kodu bozmasın diye bir güvenlik kilidi
 
-    private void OnTriggerEnter2D(Collider2D collision)
+private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Çarpan Player ise ve henüz kararma animasyonu başlamadıysa tetikle
+        // Check if the player collided and the fade animation hasn't started yet
         if (collision.gameObject.name == "Player" && !isFading)
         {
-            StartCoroutine(FadeAndLoad());
+            // Check if the gateway is unlocked (all pieces are collected)
+            if (GameManager.instance.isGatewayOpen)
+            {
+                Debug.Log("Gateway is open! Transitioning to the next scene...");
+                StartCoroutine(FadeAndLoad());
+            }
+            else
+            {
+                // Inform the player if they haven't collected enough pieces
+                Debug.Log("The gateway is locked! You need to find all missing memory pieces first.");
+            }
         }
     }
 
