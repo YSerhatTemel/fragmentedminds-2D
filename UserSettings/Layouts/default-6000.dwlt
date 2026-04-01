@@ -595,7 +595,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets
+    - Assets/Scripts
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -605,7 +605,7 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets
+  - Assets/Scripts
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\yusuf\ilkOyun
   m_LockTracker:
@@ -614,9 +614,9 @@ MonoBehaviour:
   m_FolderTreeState:
     scrollPos: {x: 0, y: 79}
     m_SelectedIDs:
-    - m_Data: 50962
+    - m_Data: 51154
     m_LastClickedID:
-      m_Data: 50962
+      m_Data: 51154
     m_ExpandedIDs:
     - m_Data: 0
     - m_Data: 51002
@@ -680,8 +680,8 @@ MonoBehaviour:
       m_ResourceFile: 
   m_ListAreaState:
     m_SelectedInstanceIDs:
-    - m_Data: 46626
-    m_LastClickedInstanceID: 46626
+    - m_Data: 41796
+    m_LastClickedInstanceID: 41796
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs:
     - m_Data: 50664
@@ -760,8 +760,6 @@ MonoBehaviour:
         m_Data: 0
       m_ExpandedIDs:
       - m_Data: -1316
-      - m_Data: 50572
-      - m_Data: 50646
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
